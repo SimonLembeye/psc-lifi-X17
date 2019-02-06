@@ -1,0 +1,30 @@
+Installation Remote PC.
+
+1. Installation de Ubuntu 16.04 LTS
+
+// Indispensable de prendre cette version, la version de ROS compatible avec TurtleBot est ROS-Kinétic n'est elle compatible que avec Ubuntu 16.04 (qui n'est pas dernière version de Ubuntu)
+
+- Télécharger le fichier .iso qui correspond à votre PC (disponible un peu partout sur internet).
+- Creer une clé bootable, minimun 4Go, gràce au logiciel power iso.
+- Booter sur la clé, voir en fonction de votre PC.
+- Suivre les instructions de l'install ubuntu, vous pouvez fonctionner en Dual Boot mais attention ROS est assez volumineux.
+
+2. Installation de ROS Kinétic
+
+- Suivre les instructions présentes sur cette page : (mieux que les instructions du site ROS lui même)http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/
+Commandes effectuées sur notre PC :
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ wget https://raw.githubusercontent.com/ROBOTIS-GIT/robotis_tools/master/install_ros_kinetic.sh && chmod 755 ./install_ros_kinetic.sh && bash ./install_ros_kinetic.sh
+
+Installation des packages dépendants
+$ sudo apt-get install ros-kinetic-joy ros-kinetic-teleop-twist-joy ros-kinetic-teleop-twist-keyboard ros-kinetic-laser-proc ros-kinetic-rgbd-launch ros-kinetic-depthimage-to-laserscan ros-kinetic-rosserial-arduino ros-kinetic-rosserial-python ros-kinetic-rosserial-server ros-kinetic-rosserial-client ros-kinetic-rosserial-msgs ros-kinetic-amcl ros-kinetic-map-server ros-kinetic-move-base ros-kinetic-urdf ros-kinetic-xacro ros-kinetic-compressed-image-transport ros-kinetic-rqt-image-view ros-kinetic-gmapping ros-kinetic-navigation ros-kinetic-interactive-markers
+
+$ cd ~/catkin_ws/src/
+$ git clone https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
+$ git clone https://github.com/ROBOTIS-GIT/turtlebot3.git
+$ cd ~/catkin_ws && catkin_make
+
+// Nous avons rencontré un problème pour l'installation du package catkin.
+// Le terminal conseille d'executer sudo apt install catkin mais si cela ne fonctionnne pas faire sudo apt-get install ros-kinetic-catkin pour préciser la version de ROS effectuée
+(plus d'infos ici https://answers.ros.org/question/258444/sudo-apt-install-catkin-not-working/)
