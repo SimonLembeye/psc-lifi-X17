@@ -28,3 +28,9 @@ $ cd ~/catkin_ws && catkin_make
 // Nous avons rencontré un problème pour l'installation du package catkin.
 // Le terminal conseille d'executer sudo apt install catkin mais si cela ne fonctionnne pas faire sudo apt-get install ros-kinetic-catkin pour préciser la version de ROS effectuée
 (plus d'infos ici https://answers.ros.org/question/258444/sudo-apt-install-catkin-not-working/)
+
+Vous pouvez maintenant connecter le robot en ssh : voir ssh_connexion.txt
+
+
+
+
