@@ -1,0 +1,69 @@
+// Objectif : déplacer le robot gràce à une connexion ssh et au clavier du remote PC + visualiser l'espace autour du robot (étape 7)
+
+0. Avoir fait le prise_de_controle_robot.txt
+
+1. Commencer par connecter le remote PC et le robot sur le même réseau Wifi. Attention ne pas se connecter à Polytechnique ... c'est pas ouf.
+
+
+2. Trouver les adresses IP du robot et du remote PC.
+Commande : ifconfig sur le PC et sur le robot.
+On obtient alors :
+
+psc-inf17@pscinf17-Satellite-C650:~/Desktop/PSC-Lifi-X17$ ifconfig
+enp2s0    Link encap:Ethernet  HWaddr 00:26:6c:5f:43:c8  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:2314 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2314 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:205081 (205.0 KB)  TX bytes:205081 (205.0 KB)
+
+wlp3s0    Link encap:Ethernet  HWaddr 00:26:b6:f1:6c:52  
+          inet addr:172.20.10.4  Bcast:172.20.10.15  Mask:255.255.255.240
+          inet6 addr: fe80::99b9:8879:59f:ac41/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:41562 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:28878 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:46214551 (46.2 MB)  TX bytes:3973217 (3.9 MB)
+
+Selon l'interface choisie, l'adresse IP se trouve après inet addr. Ici 172.20.10.4
+
+
+3. Se connecter sur le robot en ssh
+ssh pi@IP_ROBOT
+
+4. Ouvrir un autre terminal et lancer la commande :
+roscore
+
+Le remote PC est alors prêt à lancer des commandes ROS.
+
+
+5. Dans le terminal connecter en ssh lancer :
+roslaunch turtlebot3_bringup turtlebot3_robot.launch
+
+Le robot est maintenant prêt à recevoir les commandes du PC.
+
+
+6. Dans un troisième terminal :
+roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+
+
+Vous pouvez maintenant déplacer votre robot grâce à votre clavier !
+teleop est le package réservé pour cela.
+
+
+
+7. Vous pouvez visualiser le robot sur Rviz dans un autre terminal avec la commande :
+
+roslaunch turtlebot3_bringup turtlebot3_model.launch
+
+Les points rouges sont les obstacles qu'il détecte (sa tête qui tourne).
