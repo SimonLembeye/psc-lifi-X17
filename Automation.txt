@@ -1,3 +1,6 @@
+Understanding Topics:
+http://wiki.ros.org/ROS/Tutorials/UnderstandingTopics
+
 How to create package:
 http://wiki.ros.org/ROS/Tutorials/CreatingPackage
 
