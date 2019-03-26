@@ -6,3 +6,4 @@ http://wiki.ros.org/ROS/Tutorials/CreatingPackage
 
 Python publisher Subscirber stuffs:
 http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29
+https://www.youtube.com/watch?v=DLVyc9hOvk8&t=285s
