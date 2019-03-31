@@ -23,8 +23,8 @@ err = """
 Communications Failed or Error Compilation
 """
 
-def info(linear_vel, angular_vel, pos):
-    return "currently:\tlinear vel %s\t angular vel %s\t pos %s " % (linear_vel, angular_vel, pos)
+def info(pos_x, pos_y, inc_x, inc_y, inc_theta):
+    return "Pos: (%.3f, %.3f)\tMove: (%.3f, %.3f)\tTurn: %3.1f" % (pos_x, pos_y, inc_x, inc_y, inc_theta*180/3.1415)
 
 def constrain(input, low, high):
     if input < low:
@@ -58,8 +58,10 @@ twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = 0.0
 r = rospy.Rate(10)
 
 goal = Point()
-goal.x = 0.0
-goal.y = 0.0
+sys.stdout.write("Provide goal.x: ")
+goal.x = input()
+sys.stdout.write("Provide goal.y: ")
+goal.y = input()
 
 twist = Twist()
 
@@ -68,19 +70,26 @@ while not rospy.is_shutdown():
 	inc_y = goal.y - y
 	inc_theta = atan2(inc_y, inc_x) - theta
 
-	print "Position: (%.3f, %.3f)\tAngle: %.1f\tMove: (%.3f, %.3f)\tTurn: %.1f" % (x, y, theta*180/3.1415, inc_x, inc_y, inc_theta*180/3.1415)
+	if abs(inc_x) < 0.01 and abs(inc_y) < 0.01:
+		twist = Twist()
+		twist.linear.x = 0.0
+		twist.angular.z = 0.0
+		pub.publish(twist)
+		print info(x, y, inc_x, inc_y, inc_theta)
+		print "\nYour robot has arrived at it's destination (%.2f, %.2f) with error of (%.3f, %.3f)" % (goal.x, goal.y, inc_x, inc_y)
+		sys.exit()
+
+	print info(x, y, inc_x, inc_y, inc_theta)
 
 	if abs(inc_theta) > 0.1:
 		twist.linear.x = 0.0
-		twist.angular.z = 0.3
+		if inc_theta < 0:
+			twist.angular.z = -0.5
+		else:
+			twist.angular.z = 0.5
 	else:
-		twist.linear.x = 0.5
+		twist.linear.x = 0.2
 		twist.angular.z = 0.0
 
 	pub.publish(twist)
 	r.sleep()
-
-twist = Twist()
-twist.linear.x = 0.0
-twist.angular.z = 0.0
-pub.publish(twist)
