@@ -24,6 +24,14 @@ def newOdom(msg):
 	rot_q = msg.pose.pose.orientation
 	theta = euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])[2]
 
+def shut_down():
+	print("\n####################Shut down!####################\n")
+	twist = Twist()
+	twist.linear.x = 0.0
+	twist.angular.z = 0.0
+	pub.publish(twist)
+	print_info(x, y, theta)
+
 def print_info(pos_x, pos_y, inc_x, inc_y, inc_theta):
     print "Pos: (%.3f, %.3f)\tMove: (%.3f, %.3f)\tTurn: %3.1f" % (pos_x, pos_y, inc_x, inc_y, inc_theta*180/3.1415)
 
