@@ -24,8 +24,16 @@ def newOdom(msg):
 	rot_q = msg.pose.pose.orientation
 	theta = euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])[2]
 
-def print_info(pos_x, pos_y, inc_x, inc_y, inc_theta):
-    print "Pos: (%.3f, %.3f)\tMove: (%.3f, %.3f)\tTurn: %3.1f" % (pos_x, pos_y, inc_x, inc_y, inc_theta*180/3.1415)
+def shut_down():
+	print("\n####################Shut down!####################\n")
+	twist = Twist()
+	twist.linear.x = 0.0
+	twist.angular.z = 0.0
+	pub.publish(twist)
+	print_info(x, y, theta)
+
+def print_info(pos_x, pos_y, theta):
+    print "Pos: (%.3f, %.3f)\tAng: %3.1f" % (pos_x, pos_y, theta*180/3.1415)
 
 def constrain(input, low, high):
     if input < low:
@@ -61,51 +69,15 @@ twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = 0.0
 
 r = rospy.Rate(10)
 
-goal = Point()
-sys.stdout.write("Provide goal.x: ")
-goal.x = input()
-sys.stdout.write("Provide goal.y: ")
-goal.y = input()
-
 rospy.on_shutdown(shut_down)
 
 twist = Twist()
 
 while not rospy.is_shutdown():
-	inc_x = goal.x - x
-	inc_y = goal.y - y
-	inc_theta = atan2(inc_y, inc_x) - theta
-	if inc_theta > 3.14:
-		inc_theta -= 6.28
-	if inc_theta < -3.14:
-		inc_theta += 6.28
+	print_info(x, y, theta)
 
-	if abs(inc_x) < 0.01 and abs(inc_y) < 0.01:
-		twist = Twist()
-		twist.linear.x = 0.0
-		twist.angular.z = 0.0
-		pub.publish(twist)
-		print_info(x, y, inc_x, inc_y, inc_theta)
-		print "\nYour robot has arrived at its destination (%.2f, %.2f) with error of (%.3f, %.3f)" % (goal.x, goal.y, inc_x, inc_y)
-		sys.exit()
-
-	print_info(x, y, inc_x, inc_y, inc_theta)
-
-	if abs(inc_theta) > 0.1:
-		twist.linear.x = 0.0
-		if inc_theta < 0:
-			twist.angular.z = -ANG_VEL
-		else:
-			twist.angular.z = ANG_VEL
-	else:
-		twist.linear.x = LIN_VEL
-		twist.angular.z = 0.0
+	twist.linear.x = 0.0
+	twist.angular.z = ANG_VEL
 
 	pub.publish(twist)
 	r.sleep()
-
-twist = Twist()
-twist.linear.x = 0.0
-twist.angular.z = 0.0
-pub.publish(twist)
-print_info(x, y, inc_x, inc_y, inc_theta)
