@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import rospy
 import sys
@@ -25,7 +24,7 @@ def newOdom(msg):
 	theta = euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])[2]
 
 def shut_down():
-	print("\n####################Shut down!####################\n")
+	print("\n####################End of execution####################\n")
 	twist = Twist()
 	twist.linear.x = 0.0
 	twist.angular.z = 0.0
