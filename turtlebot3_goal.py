@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import rospy
 import sys
@@ -7,7 +6,7 @@ from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Twist
-from math import atan2
+from math import atan2, pi
 
 BURGER_MAX_LIN_VEL = 0.22
 BURGER_MAX_ANG_VEL = 2.84
@@ -30,10 +29,9 @@ def shut_down():
 	twist.linear.x = 0.0
 	twist.angular.z = 0.0
 	pub.publish(twist)
-	print_info(x, y, inc_x, inc_y, inc_theta)
 
-def print_info(pos_x, pos_y, inc_x, inc_y, inc_theta):
-    print "Pos: (%.3f, %.3f)\tMove: (%.3f, %.3f)\tTurn: %3.1f" % (pos_x, pos_y, inc_x, inc_y, inc_theta*180/3.1415)
+def print_info(pos_x, pos_y, theta, inc_theta):
+    print "Pos: (%.3f, %.3f)\tAng: %3.1f\tTurn: %3.1f" % (pos_x, pos_y, theta*180/pi, inc_theta*180/pi)
 
 def constrain(input, low, high):
     if input < low:
@@ -51,6 +49,12 @@ def checkLinearLimitVelocity(vel):
 def checkAngularLimitVelocity(vel):
     vel = constrain(vel, -BURGER_MAX_ANG_VEL, BURGER_MAX_ANG_VEL)
     return vel
+
+def betweenMinusPiAndPi(theta):
+    res = divmod(theta, 2*pi)[1]
+    if res > pi:
+        res -= 2*pi
+    return res
 
 LIN_VEL = checkLinearLimitVelocity(0.2)
 ANG_VEL = checkAngularLimitVelocity(0.5)
@@ -77,29 +81,22 @@ goal.y = input()
 
 rospy.on_shutdown(shut_down)
 
-twist = Twist()
-
 while not rospy.is_shutdown():
 	inc_x = goal.x - x
 	inc_y = goal.y - y
-	inc_theta = atan2(inc_y, inc_x) - theta
-	if inc_theta > 3.14:
-		inc_theta -= 6.28
-	if inc_theta < -3.14:
-		inc_theta += 6.28
+	inc_theta = betweenMinusPiAndPi(atan2(inc_y, inc_x) - theta)
 
 	if abs(inc_x) < 0.01 and abs(inc_y) < 0.01:
-		twist = Twist()
 		twist.linear.x = 0.0
 		twist.angular.z = 0.0
 		pub.publish(twist)
-		print_info(x, y, inc_x, inc_y, inc_theta)
+		print_info(x, y, theta, inc_theta)
 		print "\nYour robot has arrived at its destination (%.2f, %.2f) with error of (%.3f, %.3f)" % (goal.x, goal.y, inc_x, inc_y)
 		sys.exit()
 
-	print_info(x, y, inc_x, inc_y, inc_theta)
+	print_info(x, y, theta, inc_theta)
 
-	if abs(inc_theta) > 0.1:
+	if abs(inc_theta) > 0.05:
 		twist.linear.x = 0.0
 		if inc_theta < 0:
 			twist.angular.z = -ANG_VEL
@@ -111,9 +108,3 @@ while not rospy.is_shutdown():
 
 	pub.publish(twist)
 	r.sleep()
-
-twist = Twist()
-twist.linear.x = 0.0
-twist.angular.z = 0.0
-pub.publish(twist)
-print_info(x, y, inc_x, inc_y, inc_theta)
