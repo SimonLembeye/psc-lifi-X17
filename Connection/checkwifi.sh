@@ -8,7 +8,16 @@ while [ true ]; do
 
   if [ $? != 0 ]
   then
-    rosrun turtlebot3_automation turtlebot3_autonomous.py
+    rosrun turtlebot3_automation autonomous.sh
+    while [ true ]; do
+      sleep 1
+      ping -c1 $MASTER > /dev/null 2>&1
+      if [ $? -eq 0 ]
+      then
+        rosrun turtlebot3_automation connectagain.sh
+        break
+      fi
+    done
     break
   fi
 done
