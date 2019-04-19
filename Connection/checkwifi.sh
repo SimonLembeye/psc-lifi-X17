@@ -18,6 +18,5 @@ while [ true ]; do
         break
       fi
     done
-    break
   fi
 done
